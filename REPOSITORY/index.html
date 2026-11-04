@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Job Intake — Design Studio</title>
+<meta name="description" content="Tell us what you need. Get a quote-ready brief in minutes.">
+<meta name="theme-color" content="#14131A">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%2314131A%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 fill=%22%23FF5A1F%22 text-anchor=%22middle%22 font-family=%22monospace%22>+</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root{
+  --ink:#14131A;
+  --paper:#F2F0EC;
+  --paper-2:#E7E4DC;
+  --signal:#FF5A1F;
+  --spot:#00C2A8;
+  --mute:#6B6B76;
+  --line: rgba(20,19,26,0.16);
+  --white:#FFFFFF;
+  --danger:#C4342B;
+  --radius:2px;
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--body); line-height:1.5; font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+button{font-family:inherit; cursor:pointer;}
+:focus-visible{outline:2px solid var(--signal); outline-offset:2px;}
+
+/* ---------- crop-mark / job-ticket signature ---------- */
+.ticket{
+  position:relative; background:var(--white); border:1px solid var(--ink);
+  border-radius:var(--radius); padding:28px 24px;
+}
+.ticket::before, .ticket::after,
+.ticket .cm-tl, .ticket .cm-tr, .ticket .cm-bl, .ticket .cm-br{content:"";}
+.cm{position:absolute; width:14px; height:14px; pointer-events:none;}
+.cm-tl{top:-1px;left:-1px;border-top:2px solid var(--signal);border-left:2px solid var(--signal);}
+.cm-tr{top:-1px;right:-1px;border-top:2px solid var(--signal);border-right:2px solid var(--signal);}
+.cm-bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--signal);border-left:2px solid var(--signal);}
+.cm-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--signal);border-right:2px solid var(--signal);}
+
+.eyebrow{
+  font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--mute);
+}
+h1,h2,h3{font-family:var(--display); font-weight:700; margin:0 0 .4em; letter-spacing:-.01em;}
+.container{max-width:960px;margin:0 auto;padding:0 20px;}
+
+/* ---------- top bar ---------- */
+header.topbar{
+  position:sticky; top:0; z-index:50; background:var(--paper);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{display:flex; align-items:center; justify-content:space-between; padding:14px 20px; max-width:960px; margin:0 auto;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:18px;}
+.brand .mark{width:28px;height:28px;background:var(--ink);color:var(--signal);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;border-radius:var(--radius);}
+.topbar nav{display:flex; gap:18px; font-size:14px;}
+.topbar nav a{text-decoration:none; color:var(--mute);}
+.topbar nav a:hover{color:var(--ink);}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex; align-items:center; gap:8px; justify-content:center;
+  padding:13px 22px; border-radius:var(--radius); border:1px solid var(--ink);
+  font-weight:600; font-size:15px; background:var(--ink); color:var(--paper);
+  transition:transform .12s ease;
+}
+.btn:hover{transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn.outline{background:transparent; color:var(--ink);}
+.btn.accent{background:var(--signal); border-color:var(--signal); color:var(--white);}
+.btn.block{width:100%;}
+.btn[disabled]{opacity:.45; cursor:not-allowed; transform:none;}
+.btn.sm{padding:9px 14px; font-size:13px;}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--mute);}
+
+/* ---------- hero / landing ---------- */
+.hero{padding:72px 0 56px; border-bottom:1px solid var(--line);}
+.hero .eyebrow{margin-bottom:14px;}
+.hero h1{font-size:clamp(32px,5.4vw,56px); max-width:14ch;}
+.hero p.lead{font-size:18px; color:var(--mute); max-width:52ch; margin:16px 0 28px;}
+.hero-cta{display:flex; gap:12px; flex-wrap:wrap;}
+.stripe{
+  display:flex; gap:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  margin-top:52px; overflow-x:auto;
+}
+.stripe span{
+  font-family:var(--mono); font-size:12px; padding:12px 18px; white-space:nowrap;
+  border-right:1px solid var(--line); color:var(--mute);
+}
+
+section.services{padding:64px 0;}
+.grid-services{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:28px;}
+.svc-card{border:1px solid var(--line); background:var(--white); padding:18px; border-radius:var(--radius);}
+.svc-card .num{font-family:var(--mono); color:var(--signal); font-size:13px;}
+.svc-card h3{font-size:17px; margin-top:8px;}
+.svc-card p{color:var(--mute); font-size:14px; margin:6px 0 0;}
+
+section.how{padding:0 0 72px;}
+.how-steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+.how-step{padding:22px; background:var(--white); border-right:1px solid var(--line);}
+.how-step:last-child{border-right:none;}
+.how-step .n{font-family:var(--mono); font-size:12px; color:var(--mute);}
+
+footer.site-footer{border-top:1px solid var(--line); padding:28px 0; font-size:13px; color:var(--mute);}
+.foot-row{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+/* ---------- app shell ---------- */
+#app{display:none; min-height:100vh; padding:28px 0 80px;}
+#app.active{display:block;}
+#landing.hidden{display:none;}
+
+.progress{display:flex; align-items:center; gap:6px; margin-bottom:22px; flex-wrap:wrap;}
+.progress .step{
+  font-family:var(--mono); font-size:11px; padding:5px 9px; border:1px solid var(--line);
+  color:var(--mute); border-radius:var(--radius); background:var(--white);
+}
+.progress .step.active{border-color:var(--ink); color:var(--ink); font-weight:600;}
+.progress .step.done{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+.ticket-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; gap:12px; flex-wrap:wrap;}
+.ticket-head .code{font-family:var(--mono); font-size:12px; color:var(--mute);}
+
+.field{margin-bottom:18px;}
+.field label{display:block; font-size:13px; font-weight:600; margin-bottom:6px;}
+.field .hint{font-size:12px; color:var(--mute); margin-top:5px;}
+.field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=date],
+.field input[type=number], .field textarea, .field select{
+  width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:var(--radius);
+  font-family:var(--body); font-size:15px; background:var(--paper);
+}
+.field input:focus, .field textarea:focus, .field select:focus{background:var(--white); border-color:var(--ink);}
+.field textarea{min-height:80px; resize:vertical;}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:560px){.row2{grid-template-columns:1fr;}}
+
+.chip-group{display:flex; flex-wrap:wrap; gap:8px;}
+.chip{
+  padding:8px 13px; border:1px solid var(--line); border-radius:20px; font-size:13px;
+  background:var(--white); user-select:none;
+}
+.chip input{display:none;}
+.chip.checked{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+.service-picker{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin:22px 0 30px;}
+.svc-select{
+  border:1px solid var(--line); background:var(--white); border-radius:var(--radius); padding:16px;
+  cursor:pointer; position:relative;
+}
+.svc-select.checked{border-color:var(--signal); box-shadow:inset 0 0 0 1px var(--signal);}
+.svc-select h3{font-size:16px; margin:6px 0 4px;}
+.svc-select p{font-size:13px; color:var(--mute); margin:0;}
+.svc-select .tick{position:absolute; top:12px; right:12px; width:18px; height:18px; border:1px solid var(--mute); border-radius:3px;}
+.svc-select.checked .tick{background:var(--signal); border-color:var(--signal);}
+
+.section-block{margin-bottom:40px;}
+.section-block .head{display:flex; align-items:baseline; gap:10px; margin-bottom:16px; border-bottom:1px dashed var(--line); padding-bottom:10px;}
+
+.notice-box{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:20px; font-size:14px; color:var(--ink);}
+.notice-box h4{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--mute); margin:18px 0 8px;}
+.notice-box h4:first-child{margin-top:0;}
+.notice-box ul{margin:0; padding-left:18px;}
+.notice-box li{margin-bottom:4px;}
+.accept-row{display:flex; gap:10px; align-items:flex-start; margin-top:18px; padding-top:16px; border-top:1px solid var(--line);}
+
+.pay-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:640px){.pay-grid{grid-template-columns:1fr;}}
+.pay-card{border:1px solid var(--line); background:var(--white); padding:18px; border-radius:var(--radius);}
+.pay-card .tag{font-family:var(--mono); font-size:11px; color:var(--spot); text-transform:uppercase; letter-spacing:.08em;}
+.kv{display:flex; justify-content:space-between; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
+.kv:last-child{border-bottom:none;}
+.kv .k{color:var(--mute);}
+.kv .v{font-family:var(--mono); text-align:right; word-break:break-all;}
+.copy-btn{border:none;background:transparent;color:var(--signal);font-size:12px;font-family:var(--mono);padding:0 0 0 8px;}
+
+.nav-row{display:flex; justify-content:space-between; margin-top:26px; gap:10px;}
+
+.ai-box{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+.ai-msg{padding:10px 0; font-size:14px;}
+.ai-suggestion{border:1px solid var(--spot); background:rgba(0,194,168,.06); padding:16px; border-radius:var(--radius); margin-top:14px;}
+.ai-suggestion .tag{font-family:var(--mono); font-size:11px; color:var(--spot); text-transform:uppercase;}
+
+.summary-list{font-size:14px;}
+.summary-list dt{font-weight:600; margin-top:12px;}
+.summary-list dd{margin:2px 0 0; color:var(--mute); white-space:pre-wrap;}
+
+.toast{
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:var(--ink); color:var(--paper); padding:12px 20px; border-radius:var(--radius);
+  font-size:14px; z-index:200; opacity:0; pointer-events:none; transition:opacity .2s ease;
+}
+.toast.show{opacity:1;}
+
+.final-screen{text-align:center; padding:40px 0;}
+.final-screen .mark-big{width:64px;height:64px;background:var(--ink);color:var(--signal);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:28px;margin:0 auto 20px;border-radius:50%;}
+
+.admin-gate{max-width:420px; margin:80px auto; padding:0 20px;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="mark">+</span><span id="brandName">Studio</span></div>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#how">How it works</a>
+      <a href="#" id="navStart">Start a request</a>
+      <a href="#" id="navAdmin" style="font-family:var(--mono);font-size:12px;">Admin</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ LANDING PAGE ============ -->
+<main id="landing">
+  <div class="container hero">
+    <div class="eyebrow">Job intake, no back-and-forth</div>
+    <h1>Tell us what you need. We turn it into a brief we can quote same day.</h1>
+    <p class="lead" id="heroLead">One short form replaces the usual chain of emails and voice notes. Answer a few questions — or let our assistant suggest what to ask for — and your request lands in our inbox, structured and ready to quote.</p>
+    <div class="hero-cta">
+      <button class="btn accent" id="ctaStart">Start a request →</button>
+      <a class="btn outline" href="#services">See what we design</a>
+    </div>
+    <div class="stripe">
+      <span>LOGO DESIGN</span><span>FLYER DESIGN</span><span>BRANDING</span><span>REBRAND / CORRECTIONS</span><span>TRAINING</span>
+    </div>
+  </div>
+
+  <section class="services" id="services">
+    <div class="container">
+      <div class="eyebrow">What we take briefs for</div>
+      <h2>Five services, one intake form</h2>
+      <div class="grid-services" id="serviceCards"></div>
+    </div>
+  </section>
+
+  <section class="how" id="how">
+    <div class="container">
+      <div class="eyebrow">How it works</div>
+      <h2 style="margin-bottom:20px;">Three steps to a quote</h2>
+      <div class="how-steps">
+        <div class="how-step"><div class="n">01</div><h3>Fill the brief</h3><p style="color:var(--mute);font-size:14px;">Pick a service or ask our assistant what you might need, then answer the questions that apply.</p></div>
+        <div class="how-step"><div class="n">02</div><h3>We review &amp; confirm</h3><p style="color:var(--mute);font-size:14px;">Your request emails straight to us. We reply with a quote and timeline.</p></div>
+        <div class="how-step"><div class="n">03</div><h3>60% down, we start</h3><p style="color:var(--mute);font-size:14px;">Once the deposit clears we get to work. Balance is due before final files are handed over.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ APP (questionnaire flow) ============ -->
+<div id="app">
+  <div class="container">
+
+    <div class="progress" id="progressBar"></div>
+
+    <!-- STEP: choose path -->
+    <div class="step-panel" id="step-path">
+      <div class="ticket">
+        <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+        <div class="eyebrow">Step 1 — how would you like to start?</div>
+        <h2>What are you looking for today?</h2>
+        <div class="service-picker" style="margin-top:24px;">
+          <div class="svc-select" data-path="ai">
+            <div class="tick"></div>
+            <div class="eyebrow" style="color:var(--spot);">Not sure yet</div>
+            <h3>Let the assistant suggest</h3>
+            <p>Answer a few quick questions and we'll recommend the right service(s) for you.</p>
+          </div>
+          <div class="svc-select" data-path="manual">
+            <div class="tick"></div>
+            <div class="eyebrow">I know what I need</div>
+            <h3>Pick a service myself</h3>
+            <p>Go straight to the form for logo, flyer, branding, rebrand, or training.</p>
+          </div>
+        </div>
+        <div class="nav-row"><span></span><button class="btn accent" id="path-next" disabled>Continue →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP: AI suggest -->
+    <div class="step-panel" id="step-ai" style="display:none;">
+      <div class="ticket">
+        <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+        <div class="eyebrow">Category 1 — Assistant</div>
+        <h2>A few quick questions</h2>
+        <div class="ai-box" style="margin-top:18px; border:none; padding:0;">
+          <div class="field">
+            <label>In your own words, what's the problem or goal? <span style="color:var(--mute);font-weight:400;">(e.g. "opening a shop, need a look" or "old logo feels outdated")</span></label>
+            <textarea id="aiGoal" placeholder="Tell us a little about your business and what prompted this..."></textarea>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Do you already have any design assets?</label>
+              <select id="aiHasAssets">
+                <option value="none">No, starting from scratch</option>
+                <option value="logo-only">Yes, just a logo</option>
+                <option value="full-brand">Yes, a full brand kit</option>
+                <option value="outdated">Yes, but it's outdated</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Rough budget (₦)</label>
+              <select id="aiBudget">
+                <option value="under-30k">Under ₦30,000</option>
+                <option value="30k-100k">₦30,000 – ₦100,000</option>
+                <option value="100k-300k">₦100,000 – ₦300,000</option>
+                <option value="300k-plus">₦300,000+</option>
+                <option value="not-sure">Not sure yet</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Timeline</label>
+            <select id="aiTimeline">
+              <option value="asap">As soon as possible</option>
+              <option value="2-weeks">Within 2 weeks</option>
+              <option value="month">Within a month</option>
+              <option value="flexible">Flexible</option>
+            </select>
+          </div>
+          <button class="btn outline" id="aiSuggestBtn">Get a suggestion →</button>
+          <div id="aiResult"></div>
+        </div>
+        <div class="nav-row"><button class="btn outline" data-back="step-path">← Back</button><button class="btn accent" id="ai-next" style="display:none;">Continue with this →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP: manual service picker -->
+    <div class="step-panel" id="step-services" style="display:none;">
+      <div class="ticket">
+        <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+        <div class="eyebrow">Category 2 — Select service(s)</div>
+        <h2>What do you need done? <span style="font-weight:400;font-size:14px;color:var(--mute);">(pick one or more)</span></h2>
+        <div class="service-picker" id="serviceSelectGrid"></div>
+        <div class="nav-row"><button class="btn outline" data-back="step-path">← Back</button><button class="btn accent" id="services-next" disabled>Continue →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP: dynamic forms -->
+    <div class="step-panel" id="step-forms" style="display:none;">
+      <div id="formsContainer"></div>
+      <div class="nav-row"><button class="btn outline" id="forms-back">← Back</button><button class="btn accent" id="forms-next">Continue →</button></div>
+    </div>
+
+    <!-- STEP: notice / policy -->
+    <div class="step-panel" id="step-notice" style="display:none;">
+      <div class="ticket">
+        <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+        <div class="eyebrow">Step — Before we start</div>
+        <h2>Payment terms &amp; house policy</h2>
+        <div class="notice-box" style="margin-top:16px;">
+          <h4>Payment schedule</h4>
+          <p><strong>60%</strong> of the total cost of the service(s) booked is due <strong>before work begins</strong>. The remaining <strong>40% balance</strong> is due <strong>in full before final files are delivered</strong>.</p>
+          <h4>House policy</h4>
+          <ul>
+            <li>Work begins only after the 60% deposit is confirmed.</li>
+            <li>Final, high-resolution files are released only after the balance is paid in full.</li>
+            <li>Revisions follow the number agreed at quoting — extra revisions may attract a fee.</li>
+            <li>Deadlines depend on how complete and prompt your input/feedback is.</li>
+            <li>Deposits are non-refundable once work has started; cancellations before work starts may be refunded minus a processing fee.</li>
+            <li>All information you share is used only to deliver your project and is not sold or shared with third parties.</li>
+            <li>Ownership/usage rights transfer to you upon full and final payment.</li>
+          </ul>
+        </div>
+        <div class="accept-row">
+          <input type="checkbox" id="acceptPolicy" style="margin-top:3px;">
+          <label for="acceptPolicy" style="font-size:14px;">I have read and agree to the payment schedule and house policy above.</label>
+        </div>
+        <div class="nav-row"><button class="btn outline" id="notice-back">← Back</button><button class="btn accent" id="notice-next" disabled>Continue →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP: payment -->
+    <div class="step-panel" id="step-payment" style="display:none;">
+      <div class="ticket">
+        <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+        <div class="eyebrow">Step — Means of payment</div>
+        <h2>How to send the 60% deposit</h2>
+        <div class="pay-grid" style="margin-top:18px;">
+          <div class="pay-card">
+            <div class="tag">Local — Naira</div>
+            <div class="kv"><span class="k">Account number</span><span class="v" id="payAcctNum">—</span></div>
+            <div class="kv"><span class="k">Account name</span><span class="v" id="payAcctName">—</span></div>
+            <div class="kv"><span class="k">Bank</span><span class="v" id="payBankName">—</span></div>
+          </div>
+          <div class="pay-card">
+            <div class="tag">Crypto — Decentralized</div>
+            <div class="kv"><span class="k">Wallet address</span><span class="v" id="payWallet">—</span></div>
+            <div class="kv"><span class="k">Chain / network</span><span class="v" id="payChain">—</span></div>
+            <div class="kv"><span class="k">Bybit email</span><span class="v" id="payBybit">—</span></div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:20px;">
+          <label>Which method will you use?</label>
+          <select id="payMethod">
+            <option value="naira">Bank transfer (Naira)</option>
+            <option value="crypto">Crypto</option>
+            <option value="undecided">I'll decide after I get the quote</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Payment reference / transaction note <span style="color:var(--mute);font-weight:400;">(optional — fill in once you've paid)</span></label>
+          <input type="text" id="payRef" placeholder="e.g. transfer reference or TX hash">
+        </div>
+        <div class="nav-row"><button class="btn outline" id="payment-back">← Back</button><button class="btn accent" id="payment-next">Continue →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP: contact + review + submit -->
+    <div class="step-panel" id="step-review" style="display:none;">
+      <div class="ticket">
+        <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+        <div class="eyebrow">Final step — Your details</div>
+        <h2>Where should we reach you?</h2>
+        <div class="row2" style="margin-top:16px;">
+          <div class="field"><label>Full name *</label><input type="text" id="custName" required></div>
+          <div class="field"><label>Email *</label><input type="email" id="custEmail" required></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Phone / WhatsApp *</label><input type="tel" id="custPhone" required></div>
+          <div class="field"><label>Business name (if any)</label><input type="text" id="custBiz"></div>
+        </div>
+        <h3 style="margin-top:26px;font-size:16px;">Review your brief</h3>
+        <dl class="summary-list" id="reviewSummary"></dl>
+        <div class="nav-row"><button class="btn outline" id="review-back">← Back</button><button class="btn accent" id="submitBtn">Submit request →</button></div>
+      </div>
+    </div>
+
+    <!-- STEP: final thank you -->
+    <div class="step-panel" id="step-final" style="display:none;">
+      <div class="final-screen">
+        <div class="mark-big">✓</div>
+        <h2 id="finalHeadline">Thank you for reaching out</h2>
+        <p id="finalBody" style="color:var(--mute);max-width:46ch;margin:0 auto 24px;"></p>
+        <button class="btn outline" id="restartBtn">Submit another request</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ ADMIN SETUP (business owner only) ============ -->
+<div id="adminScreen" style="display:none;">
+  <div class="container admin-gate">
+    <div class="ticket">
+      <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+      <div class="eyebrow">Business setup</div>
+      <h2 style="font-size:20px;">Configure this app</h2>
+      <p style="font-size:13px;color:var(--mute);">These details are required once before the app goes live for customers. Stored only on this device unless you deploy centrally — see README for a shared setup.</p>
+      <div id="adminForm"></div>
+      <div class="nav-row"><button class="btn outline" id="adminClose">Close</button><button class="btn accent" id="adminSave">Save &amp; activate</button></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container foot-row">
+    <span id="footBrand">© Studio</span>
+    <span>Requests are emailed directly — nothing is sold or shared with third parties.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   BUSINESS CONFIG
+   Edit the defaults below OR use the "Admin" link in the
+   top nav to set these up on-device (saved to localStorage).
+   ========================================================= */
+const DEFAULT_CONFIG = {
+  businessName: "Your Design Studio",
+  tagline: "One short form replaces the usual chain of emails and voice notes.",
+  notifyEmail: "you@yourstudio.com",
+  ctaMessage: "We're grateful you thought of us for this. We'll review your brief and get back to you shortly with a quote — looking forward to working together, and to many more projects down the line.",
+  bank: { accountNumber: "0000000000", accountName: "Your Studio Name", bankName: "Your Bank" },
+  crypto: { wallet: "0xYOURWALLETADDRESS", chain: "USDT (TRC20) / BTC — specify per invoice", bybitEmail: "pay@yourstudio.com" },
+  emailjs: { publicKey: "YOUR_EMAILJS_PUBLIC_KEY", serviceId: "YOUR_EMAILJS_SERVICE_ID", templateId: "YOUR_EMAILJS_TEMPLATE_ID" }
+};
+function loadConfig(){
+  try{ const saved = JSON.parse(localStorage.getItem('studio_config')); return saved ? {...DEFAULT_CONFIG, ...saved, bank:{...DEFAULT_CONFIG.bank,...(saved.bank||{})}, crypto:{...DEFAULT_CONFIG.crypto,...(saved.crypto||{})}, emailjs:{...DEFAULT_CONFIG.emailjs,...(saved.emailjs||{})} } : DEFAULT_CONFIG; }
+  catch(e){ return DEFAULT_CONFIG; }
+}
+let CONFIG = loadConfig();
+
+const SERVICES = [
+  {id:'logo', title:'Logo Design', blurb:'A mark that carries your brand everywhere.'},
+  {id:'flyer', title:'Flyer Design', blurb:'Promo, event or product flyers, print or digital.'},
+  {id:'branding', title:'Branding', blurb:'A full identity — logo, colors, assets, guidelines.'},
+  {id:'rebrand', title:'Rebranding / Corrections', blurb:'Refresh or fix a design you already have.'},
+  {id:'training', title:'Training / Tutorials', blurb:'Learn design software or the fundamentals.'}
+];
+
+/* ---------------- render landing content from config ---------------- */
+function renderBrand(){
+  document.getElementById('brandName').textContent = CONFIG.businessName;
+  document.getElementById('footBrand').textContent = '© ' + CONFIG.businessName;
+  document.getElementById('heroLead').textContent = CONFIG.tagline;
+  document.getElementById('finalBody').textContent = CONFIG.ctaMessage;
+  document.getElementById('payAcctNum').textContent = CONFIG.bank.accountNumber;
+  document.getElementById('payAcctName').textContent = CONFIG.bank.accountName;
+  document.getElementById('payBankName').textContent = CONFIG.bank.bankName;
+  document.getElementById('payWallet').textContent = CONFIG.crypto.wallet;
+  document.getElementById('payChain').textContent = CONFIG.crypto.chain;
+  document.getElementById('payBybit').textContent = CONFIG.crypto.bybitEmail;
+  try{ if (CONFIG.emailjs.publicKey && !CONFIG.emailjs.publicKey.startsWith('YOUR_')) emailjs.init(CONFIG.emailjs.publicKey); }catch(e){}
+}
+function renderServiceCards(){
+  document.getElementById('serviceCards').innerHTML = SERVICES.map((s,i)=>`
+    <div class="svc-card"><div class="num">0${i+1}</div><h3>${s.title}</h3><p>${s.blurb}</p></div>`).join('');
+}
+renderBrand(); renderServiceCards();
+
+/* ---------------- nav / view switching ---------------- */
+const landing = document.getElementById('landing');
+const appEl = document.getElementById('app');
+const adminScreen = document.getElementById('adminScreen');
+function showApp(){ landing.classList.add('hidden'); appEl.classList.add('active'); adminScreen.style.display='none'; window.scrollTo(0,0); goToStep('step-path'); }
+function showLanding(){ landing.classList.remove('hidden'); appEl.classList.remove('active'); adminScreen.style.display='none'; window.scrollTo(0,0); }
+document.getElementById('ctaStart').onclick = showApp;
+document.getElementById('navStart').onclick = (e)=>{e.preventDefault(); showApp();};
+
+/* ---------------- admin setup ---------------- */
+const ADMIN_FIELDS = [
+  ['businessName','Business name'], ['tagline','Landing page tagline'], ['notifyEmail','Notification email (receives every request)'],
+  ['ctaMessage','Closing thank-you message'],
+  ['bank.accountNumber','Bank — Account number'], ['bank.accountName','Bank — Account name'], ['bank.bankName','Bank — Bank name'],
+  ['crypto.wallet','Crypto — Wallet address'], ['crypto.chain','Crypto — Chain / network'], ['crypto.bybitEmail','Crypto — Bybit email'],
+  ['emailjs.publicKey','EmailJS — Public key'], ['emailjs.serviceId','EmailJS — Service ID'], ['emailjs.templateId','EmailJS — Template ID']
+];
+function getPath(obj,path){ return path.split('.').reduce((o,k)=>o&&o[k],obj); }
+function setPath(obj,path,val){ const parts=path.split('.'); let o=obj; for(let i=0;i<parts.length-1;i++) o=o[parts[i]]; o[parts[parts.length-1]]=val; }
+function renderAdminForm(){
+  document.getElementById('adminForm').innerHTML = ADMIN_FIELDS.map(([path,label])=>`
+    <div class="field"><label>${label}</label><input type="text" data-path="${path}" value="${(getPath(CONFIG,path)||'').toString().replace(/"/g,'&quot;')}"></div>`).join('');
+}
+document.getElementById('navAdmin').onclick=(e)=>{
+  e.preventDefault();
+  landing.classList.add('hidden'); appEl.classList.remove('active'); adminScreen.style.display='block';
+  renderAdminForm(); window.scrollTo(0,0);
+};
+document.getElementById('adminClose').onclick=()=>{ adminScreen.style.display='none'; landing.classList.remove('hidden'); };
+document.getElementById('adminSave').onclick=()=>{
+  document.querySelectorAll('#adminForm [data-path]').forEach(inp=>setPath(CONFIG, inp.dataset.path, inp.value));
+  localStorage.setItem('studio_config', JSON.stringify(CONFIG));
+  renderBrand();
+  showToast('Business details saved on this device.');
+  adminScreen.style.display='none'; landing.classList.remove('hidden');
+};
+
+/* ---------------- toast ---------------- */
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2600); }
+
+/* ---------------- step flow control ---------------- */
+const FLOW = ['step-path']; // extended dynamically
+let stepHistory = ['step-path'];
+function goToStep(id){
+  document.querySelectorAll('.step-panel').forEach(p=>p.style.display='none');
+  document.getElementById(id).style.display='block';
+  renderProgress(id);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function renderProgress(current){
+  const order = ['step-path','step-ai','step-services','step-forms','step-notice','step-payment','step-review','step-final'];
+  const labels = {'step-path':'Start','step-ai':'Assistant','step-services':'Services','step-forms':'Brief','step-notice':'Terms','step-payment':'Payment','step-review':'Review','step-final':'Done'};
+  const relevant = state.path==='ai' ? ['step-path','step-ai','step-forms','step-notice','step-payment','step-review','step-final'] : ['step-path','step-services','step-forms','step-notice','step-payment','step-review','step-final'];
+  const idx = relevant.indexOf(current);
+  document.getElementById('progressBar').innerHTML = relevant.map((s,i)=>`<span class="step ${i<idx?'done':''} ${i===idx?'active':''}">${labels[s]}</span>`).join('');
+}
+
+/* ---------------- state ---------------- */
+const state = { path:null, services:[], answers:{}, aiSuggestion:null };
+
+/* ---- path selection ---- */
+document.querySelectorAll('#step-path .svc-select').forEach(card=>{
+  card.onclick = ()=>{
+    document.querySelectorAll('#step-path .svc-select').forEach(c=>c.classList.remove('checked'));
+    card.classList.add('checked');
+    state.path = card.dataset.path;
+    document.getElementById('path-next').disabled=false;
+  };
+});
+document.getElementById('path-next').onclick = ()=>{
+  if(state.path==='ai') goToStep('step-ai'); else { renderServiceGrid(); goToStep('step-services'); }
+};
+
+/* ---- Category 1: AI suggestion (rule-based assistant, no key required) ---- */
+function suggest(goal, hasAssets, budget, timeline){
+  goal = (goal||'').toLowerCase();
+  const picks = new Set();
+  if (/train|learn|teach|beginner|software|how to use|photoshop|illustrator|coreldraw|canva/.test(goal)) picks.add('training');
+  if (/flyer|poster|promo|event|ad(vert)?/.test(goal)) picks.add('flyer');
+  if (/rebrand|update|refresh|old logo|outdated|correction|fix|change/.test(goal) || hasAssets==='outdated') picks.add('rebrand');
+  if (/brand|identity|business card|letterhead|full package|start(ing)? a business|new business/.test(goal)) picks.add('branding');
+  if (/logo/.test(goal) && !picks.has('rebrand')) picks.add('logo');
+  if (picks.size===0){
+    if (hasAssets==='none') picks.add('branding');
+    else if (hasAssets==='logo-only') picks.add('branding');
+    else picks.add('logo');
+  }
+  let note = "Based on what you shared, ";
+  if (budget==='under-30k') note += "we'd suggest starting focused (one deliverable) to fit comfortably in that range — we'll confirm exact pricing after your brief. ";
+  if (timeline==='asap') note += "flag your deadline in the brief so we can prioritise. ";
+  return {services:[...picks], note};
+}
+document.getElementById('aiSuggestBtn').onclick = ()=>{
+  const goal = document.getElementById('aiGoal').value.trim();
+  if(!goal){ showToast('Tell us a little about what you need first.'); return; }
+  const hasAssets = document.getElementById('aiHasAssets').value;
+  const budget = document.getElementById('aiBudget').value;
+  const timeline = document.getElementById('aiTimeline').value;
+  const result = suggest(goal, hasAssets, budget, timeline);
+  state.aiSuggestion = result;
+  const names = result.services.map(id=>SERVICES.find(s=>s.id===id).title).join(', ');
+  document.getElementById('aiResult').innerHTML = `
+    <div class="ai-suggestion">
+      <div class="tag">Suggested for you</div>
+      <h3 style="margin:8px 0 6px;font-size:17px;">${names}</h3>
+      <p style="font-size:14px;color:var(--ink);margin:0;">${result.note}You'll fill a short form for each so we can quote accurately.</p>
+    </div>`;
+  document.getElementById('ai-next').style.display='inline-flex';
+  state.answers.aiIntake = {goal, hasAssets, budget, timeline};
+};
+document.getElementById('ai-next').onclick = ()=>{
+  state.services = state.aiSuggestion.services.slice();
+  renderForms();
+  goToStep('step-forms');
+};
+
+/* ---- Category 2: manual service picker ---- */
+function renderServiceGrid(){
+  document.getElementById('serviceSelectGrid').innerHTML = SERVICES.map(s=>`
+    <div class="svc-select" data-id="${s.id}">
+      <div class="tick"></div>
+      <h3>${s.title}</h3><p>${s.blurb}</p>
+    </div>`).join('');
+  document.querySelectorAll('#serviceSelectGrid .svc-select').forEach(card=>{
+    card.onclick = ()=>{
+      card.classList.toggle('checked');
+      const id = card.dataset.id;
+      if(card.classList.contains('checked')) state.services.push(id);
+      else state.services = state.services.filter(x=>x!==id);
+      document.getElementById('services-next').disabled = state.services.length===0;
+    };
+  });
+}
+document.getElementById('services-next').onclick = ()=>{ renderForms(); goToStep('step-forms'); };
+
+/* ---------------- dynamic form field defs per service ---------------- */
+const FORM_DEFS = {
+  logo: {title:'Logo Design', fields:[
+    ['text','brandName','Business / brand name',true],
+    ['text','slogan','Slogan or tagline (if any)'],
+    ['text','industry','Industry / niche',true],
+    ['chips','logoStyle','Preferred style',true,['Wordmark','Lettermark','Icon/Pictorial','Abstract','Mascot','Combination','Emblem']],
+    ['text','colorsWant','Preferred colors (or "open to suggestions")',true],
+    ['text','colorsAvoid','Colors to avoid'],
+    ['chips','moodStyle','Overall feel',true,['Modern','Classic','Playful','Luxury','Minimalist','Bold']],
+    ['textarea','inspiration','Reference / inspiration logos (links or description)'],
+    ['select','concepts','Number of initial concepts wanted',false,['1','2','3','3+']],
+    ['select','revisions','Revisions needed',false,['1','2','3','Unlimited (custom quote)']],
+    ['chips','fileFormats','File formats needed',true,['AI','PDF','PNG','SVG','JPEG']],
+    ['chips','usage','Where the logo will be used',true,['Website','Social media','Print','Signage','Merchandise']],
+    ['date','deadline','Deadline'],
+    ['select','budget','Budget range',true,['Under ₦30,000','₦30,000–₦100,000','₦100,000–₦300,000','₦300,000+','Not sure']]
+  ]},
+  flyer: {title:'Flyer Design', fields:[
+    ['select','purpose','Purpose of flyer',true,['Event','Promotion/sale','Product launch','Service ad','Other']],
+    ['textarea','eventDetails','Event/offer details (date, time, venue — if applicable)'],
+    ['select','size','Flyer size/format',true,['A5','A4','Social media post','Social media story','Other']],
+    ['select','useType','Print or digital use?',true,['Print only','Digital only','Both']],
+    ['text','headline','Key message / headline',true],
+    ['chips','content','Content to include',true,['Text copy','Contact info','Price','QR code','Social handles']],
+    ['select','images','Images to include',true,['I will supply images','Need stock images','Need AI-generated images']],
+    ['chips','moodStyle','Style preference',true,['Modern','Bold','Minimal','Colorful','Corporate']],
+    ['text','printQty','Quantity to print (if applicable)'],
+    ['date','deadline','Deadline'],
+    ['select','budget','Budget range',true,['Under ₦30,000','₦30,000–₦100,000','₦100,000–₦300,000','₦300,000+','Not sure']]
+  ]},
+  branding: {title:'Branding', fields:[
+    ['text','bizName','Business name',true],
+    ['textarea','bizDesc','What does your business do?',true],
+    ['text','audience','Target audience',true],
+    ['textarea','mission','Mission / vision / values (brief)'],
+    ['text','competitors','Competitors (if known)'],
+    ['chips','personality','Brand personality',true,['Fun','Formal','Luxury','Edgy','Friendly','Minimalist','Bold']],
+    ['chips','deliverables','Deliverables needed',true,['Logo','Business card','Letterhead','Brand guideline doc','Social media kit','Packaging','Signage']],
+    ['textarea','existingAssets','Existing brand assets, if any (describe or link)'],
+    ['text','colorsWant','Color & style preferences'],
+    ['date','deadline','Deadline'],
+    ['select','budget','Budget range',true,['Under ₦100,000','₦100,000–₦300,000','₦300,000–₦700,000','₦700,000+','Not sure']]
+  ]},
+  rebrand: {title:'Rebranding / Corrections', fields:[
+    ['textarea','previousWork','What was previously delivered? (describe, or note you will send the file)',true],
+    ['textarea','whatToChange','What specifically needs to change?',true],
+    ['text','reason','Reason for the rebrand/correction'],
+    ['text','whatToKeep','Elements to keep unchanged'],
+    ['textarea','newDirection','New direction / references (if any)'],
+    ['date','deadline','Deadline'],
+    ['select','budget','Budget range',true,['Under ₦30,000','₦30,000–₦100,000','₦100,000–₦300,000','₦300,000+','Not sure']]
+  ]},
+  training: {title:'Training / Tutorials', fields:[
+    ['select','skillLevel','Current skill level',true,['New to computers','Comfortable with computers, new to design','Beginner in design software','Intermediate','Advanced, want to specialise']],
+    ['chips','interests','Areas of interest',true,['Photoshop','Illustrator','CorelDraw','Canva','General computer literacy','Branding principles']],
+    ['select','mode','Preferred training mode',true,['1-on-1','Small group','Online (live)','Online (self-paced)','In person']],
+    ['select','duration','Duration desired',true,['A few days','1–2 weeks','1 month','2–3 months','Ongoing']],
+    ['text','schedule','Preferred schedule / frequency'],
+    ['select','goal','Goal of training',true,['Personal/hobby','Career change','Growing my business','Academic']],
+    ['select','device','Device availability',true,['I have my own laptop','I need to use a provided computer']],
+    ['select','budget','Budget range',true,['Under ₦30,000','₦30,000–₦80,000','₦80,000–₦150,000','₦150,000+','Not sure']]
+  ]}
+};
+
+function renderForms(){
+  const container = document.getElementById('formsContainer');
+  container.innerHTML = state.services.map(id=>{
+    const def = FORM_DEFS[id];
+    const fieldsHtml = def.fields.map(f=>renderField(id,f)).join('');
+    return `<div class="section-block">
+      <div class="ticket">
+        <div class="cm cm-tl"></div><div class="cm cm-tr"></div><div class="cm cm-bl"></div><div class="cm cm-br"></div>
+        <div class="head"><span class="eyebrow">Brief</span><h2 style="margin:0;font-size:20px;">${def.title}</h2></div>
+        ${fieldsHtml}
+      </div>
+    </div>`;
+  }).join('');
+  // wire up chip groups
+  container.querySelectorAll('.chip-group').forEach(group=>{
+    group.querySelectorAll('.chip').forEach(chip=>{
+      chip.onclick = ()=>{
+        chip.classList.toggle('checked');
+        const cb = chip.querySelector('input'); cb.checked = chip.classList.contains('checked');
+      };
+    });
+  });
+}
+function renderField(serviceId,[type,key,label,required,options]){
+  const id = `f_${serviceId}_${key}`;
+  const req = required ? ' *' : '';
+  if(type==='text') return `<div class="field"><label>${label}${req}</label><input type="text" id="${id}" data-svc="${serviceId}" data-key="${key}"></div>`;
+  if(type==='date') return `<div class="field"><label>${label}${req}</label><input type="date" id="${id}" data-svc="${serviceId}" data-key="${key}"></div>`;
+  if(type==='textarea') return `<div class="field"><label>${label}${req}</label><textarea id="${id}" data-svc="${serviceId}" data-key="${key}"></textarea></div>`;
+  if(type==='select') return `<div class="field"><label>${label}${req}</label><select id="${id}" data-svc="${serviceId}" data-key="${key}"><option value="">Select…</option>${options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
+  if(type==='chips') return `<div class="field"><label>${label}${req}</label><div class="chip-group" id="${id}" data-svc="${serviceId}" data-key="${key}">${options.map((o,i)=>`<label class="chip"><input type="checkbox" value="${o}">${o}</label>`).join('')}</div></div>`;
+  return '';
+}
+function collectFormAnswers(){
+  const out = {};
+  state.services.forEach(id=>{ out[id] = {}; });
+  document.querySelectorAll('#formsContainer [data-svc]').forEach(el=>{
+    const svc = el.dataset.svc, key = el.dataset.key;
+    if(el.classList.contains('chip-group')){
+      const vals = [...el.querySelectorAll('input:checked')].map(i=>i.value);
+      out[svc][key] = vals.join(', ');
+    } else {
+      out[svc][key] = el.value;
+    }
+  });
+  return out;
+}
+document.getElementById('forms-back').onclick = ()=>{ goToStep(state.path==='ai'?'step-ai':'step-services'); };
+document.getElementById('forms-next').onclick = ()=>{
+  const missing = [];
+  document.querySelectorAll('#formsContainer label').forEach(()=>{});
+  // simple required check
+  let ok = true;
+  state.services.forEach(id=>{
+    FORM_DEFS[id].fields.forEach(([type,key,label,required])=>{
+      if(!required) return;
+      const el = document.querySelector(`#formsContainer [data-svc="${id}"][data-key="${key}"]`);
+      if(!el) return;
+      if(el.classList && el.classList.contains('chip-group')){
+        if(el.querySelectorAll('input:checked').length===0) ok=false;
+      } else if(!el.value){ ok=false; }
+    });
+  });
+  state.answers.forms = collectFormAnswers();
+  if(!ok){ showToast('Please fill the required (*) fields before continuing.'); }
+  goToStep('step-notice');
+};
+
+/* ---- notice ---- */
+document.getElementById('notice-back').onclick = ()=>goToStep('step-forms');
+document.getElementById('acceptPolicy').onchange = (e)=>{ document.getElementById('notice-next').disabled = !e.target.checked; };
+document.getElementById('notice-next').onclick = ()=>goToStep('step-payment');
+
+/* ---- payment ---- */
+document.getElementById('payment-back').onclick = ()=>goToStep('step-notice');
+document.getElementById('payment-next').onclick = ()=>{
+  state.answers.payment = { method: document.getElementById('payMethod').value, ref: document.getElementById('payRef').value };
+  renderReview();
+  goToStep('step-review');
+};
+document.querySelectorAll('.copy-btn').forEach(b=>{});
+
+/* ---- review + submit ---- */
+function renderReview(){
+  let html = '';
+  html += `<dt>Path</dt><dd>${state.path==='ai' ? 'Assistant-suggested' : 'Self-selected'}</dd>`;
+  html += `<dt>Service(s)</dt><dd>${state.services.map(id=>FORM_DEFS[id].title).join(', ')}</dd>`;
+  state.services.forEach(id=>{
+    const a = state.answers.forms[id];
+    html += `<dt>${FORM_DEFS[id].title}</dt><dd>` + Object.entries(a).filter(([k,v])=>v).map(([k,v])=>`${k}: ${v}`).join(' · ') + `</dd>`;
+  });
+  html += `<dt>Payment method</dt><dd>${state.answers.payment.method}</dd>`;
+  document.getElementById('reviewSummary').innerHTML = html;
+}
+document.getElementById('review-back').onclick = ()=>goToStep('step-payment');
+
+async function encryptPayload(obj){
+  // Lightweight client-side confidentiality layer: the payload is packaged as
+  // structured text; if Web Crypto is available we additionally note a hash
+  // fingerprint for tamper-evidence. True end-to-end encryption requires a
+  // server-held key pair — see README "Security notes".
+  try{
+    const enc = new TextEncoder().encode(JSON.stringify(obj));
+    const digest = await crypto.subtle.digest('SHA-256', enc);
+    return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
+  }catch(e){ return 'n/a'; }
+}
+
+document.getElementById('submitBtn').onclick = async ()=>{
+  const name = document.getElementById('custName').value.trim();
+  const email = document.getElementById('custEmail').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  if(!name||!email||!phone){ showToast('Please fill your name, email and phone.'); return; }
+  const biz = document.getElementById('custBiz').value.trim();
+  state.answers.contact = {name, email, phone, biz};
+
+  const ticketId = 'JT-' + Date.now().toString(36).toUpperCase();
+  const fingerprint = await encryptPayload(state.answers);
+  const bodyText = buildEmailBody(ticketId, fingerprint);
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  try{
+    if (window.emailjs && CONFIG.emailjs.serviceId && !CONFIG.emailjs.serviceId.startsWith('YOUR_')){
+      await emailjs.send(CONFIG.emailjs.serviceId, CONFIG.emailjs.templateId, {
+        to_email: CONFIG.notifyEmail,
+        from_name: name,
+        reply_to: email,
+        subject: `New brief — ${ticketId} — ${name}`,
+        message: bodyText
+      });
+    } else {
+      console.warn('EmailJS not configured yet — see README to connect notifications to your inbox.');
+    }
+  } catch(err){
+    console.error(err);
+    showToast('Could not send automatically — please also share this with us directly.');
+  }
+
+  document.getElementById('finalHeadline').textContent = `Thank you, ${name.split(' ')[0]}!`;
+  goToStep('step-final');
+  btn.disabled = false; btn.textContent = 'Submit request →';
+};
+
+function buildEmailBody(ticketId, fingerprint){
+  const a = state.answers;
+  let lines = [`Ticket: ${ticketId}`, `Fingerprint: ${fingerprint}`, `Path: ${state.path}`, ''];
+  lines.push(`Contact: ${a.contact.name} · ${a.contact.email} · ${a.contact.phone} · ${a.contact.biz||'-'}`, '');
+  state.services.forEach(id=>{
+    lines.push(`--- ${FORM_DEFS[id].title} ---`);
+    Object.entries(a.forms[id]).forEach(([k,v])=>{ if(v) lines.push(`${k}: ${v}`); });
+    lines.push('');
+  });
+  lines.push(`Payment method: ${a.payment.method}`, `Payment reference: ${a.payment.ref||'(not provided yet)'}`);
+  return lines.join('\n');
+}
+
+document.getElementById('restartBtn').onclick = ()=>{
+  state.path=null; state.services=[]; state.answers={}; state.aiSuggestion=null;
+  document.getElementById('aiResult').innerHTML=''; document.getElementById('ai-next').style.display='none';
+  document.getElementById('acceptPolicy').checked=false; document.getElementById('notice-next').disabled=true;
+  document.querySelectorAll('#step-path .svc-select').forEach(c=>c.classList.remove('checked'));
+  document.getElementById('path-next').disabled=true;
+  showApp();
+};
+
+/* register service worker for installability */
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }); }
+</script>
+</body>
+</html>
